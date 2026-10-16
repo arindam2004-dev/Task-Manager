@@ -1,63 +1,73 @@
-// Form, inputs aur display area ko target kar rahe hain
 const taskForm = document.getElementById('taskForm');
 const taskTitleInput = document.getElementById('taskTitle');
 const prioritySelect = document.getElementById('priority');
 const taskList = document.getElementById('taskList');
 const emptyMsg = document.getElementById('emptyMsg');
 
-// Form submit hone par yeh function chalega
+// 1. Page Load hone par LocalStorage se purane tasks fetch karna
+let savedTasks = JSON.parse(localStorage.getItem('myTasks')) || [];
+
+// Initial render
+renderTasks();
+
+// Function: Tasks ko screen par dikhana
+function renderTasks() {
+    taskList.innerHTML = ''; // Pehle list khali karein
+    
+    if (savedTasks.length === 0) {
+        taskList.appendChild(emptyMsg);
+        emptyMsg.style.display = 'block';
+        return;
+    }
+
+    emptyMsg.style.display = 'none';
+
+    savedTasks.forEach((task, index) => {
+        const taskCard = document.createElement('div');
+        taskCard.className = 'task-card';
+
+        if (task.priority === 'High') {
+            taskCard.style.borderLeftColor = '#dc3545';
+            taskCard.style.background = '#f8d7da';
+        } else if (task.priority === 'Medium') {
+            taskCard.style.borderLeftColor = '#ffc107';
+            taskCard.style.background = '#fff3cd';
+        } else {
+            taskCard.style.borderLeftColor = '#28a745';
+            taskCard.style.background = '#d4edda';
+        }
+
+        taskCard.innerHTML = `
+            <div>
+                <strong>${task.title}</strong><br>
+                <small>Priority: <em>${task.priority}</em></small>
+            </div>
+            <button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
+        `;
+
+        taskList.appendChild(taskCard);
+    });
+}
+
+// 2. Naya Task Add karna aur LocalStorage mein Save karna
 taskForm.addEventListener('submit', function(event) {
-    // Page reload hone se rokne ke liye
     event.preventDefault();
 
-    // User ki di gayi values ko fetch karna
-    const taskTitle = taskTitleInput.value;
-    const priority = prioritySelect.value;
+    const newTask = {
+        title: taskTitleInput.value,
+        priority: prioritySelect.value
+    };
 
-    // Agar pehla task hai toh empty message ko chhupa do
-    if (emptyMsg) {
-        emptyMsg.style.display = 'none';
-    }
+    savedTasks.unshift(newTask); // Array mein add kiya
+    localStorage.setItem('myTasks', JSON.stringify(savedTasks)); // LocalStorage mein save kiya
 
-    // Naya task card (div) banana
-    const taskCard = document.createElement('div');
-    taskCard.className = 'task-card';
-
-    // Priority ke hisaab se border color set karna
-    if (priority === 'High') {
-        taskCard.style.borderLeftColor = '#dc3545'; // Red for High
-        taskCard.style.background = '#f8d7da';
-    } else if (priority === 'Medium') {
-        taskCard.style.borderLeftColor = '#ffc107'; // Yellow for Medium
-        taskCard.style.background = '#fff3cd';
-    } else {
-        taskCard.style.borderLeftColor = '#28a745'; // Green for Low
-        taskCard.style.background = '#d4edda';
-    }
-
-    // Task card ke andar HTML content dalna (Task name + Priority + Delete button)
-    taskCard.innerHTML = `
-        <div>
-            <strong>${taskTitle}</strong><br>
-            <small>Priority: <em>${priority}</em></small>
-        </div>
-        <button class="delete-btn">Delete</button>
-    `;
-
-    // Delete button par click hone par task ko hataane ka logic
-    const deleteBtn = taskCard.querySelector('.delete-btn');
-    deleteBtn.addEventListener('click', function() {
-        taskCard.remove();
-        
-        // Agar saare tasks delete ho jayein, toh wapas empty message dikhana
-        if (taskList.children.length <= 1) {
-            emptyMsg.style.display = 'block';
-        }
-    });
-
-    // Naye task card ko taskList ke andar sabse upar add karna
-    taskList.prepend(taskCard);
-
-    // Form input ko clear kar dena
+    renderTasks();
     taskForm.reset();
 });
+
+// 3. Task Delete karna aur LocalStorage update karna
+function deleteTask(index) {
+    savedTasks.splice(index, 1); // Array se hataya
+    localStorage.setItem('myTasks', JSON.stringify(savedTasks)); // LocalStorage update kiya
+    renderTasks();
+}
