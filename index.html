@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!-- Web page document type -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task & Schedule Manager</title>
+    <!-- CSS File Link -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <h1>My Task & Schedule Manager</h1>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <h2>Add a New Task</h2>
+        
+        <!-- Task Input Form -->
+        <form id="taskForm">
+            <!-- Task Title Input -->
+            <label for="taskTitle">Task Name:</label>
+            <input type="text" id="taskTitle" placeholder="e.g., Complete MCA Assignment" required>
+
+            <!-- Task Category / Priority Selection -->
+            <label for="priority">Priority Level:</label>
+            <select id="priority">
+                <option value="Low">Low Priority</option>
+                <option value="Medium" selected>Medium Priority</option>
+                <option value="High">High Priority</option>
+            </select>
+
+            <!-- Submit Button -->
+            <button type="submit">Add Task</button>
+        </form>
+    </div>
+
+    <!-- Task List Container -->
+    <div class="container">
+        <h2>Your Active Tasks</h2>
+        <!-- JavaScript Is Inner Div Mein Tasks Dynamically Add Karega -->
+        <div id="taskList">
+            <p id="emptyMsg">No tasks added yet! Stay organized by adding one above.</p>
+        </div>
+    </div>
+
+    <!-- JavaScript File Link -->
+    <script src="script.js"></script>
+</body>
+</html>
